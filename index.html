@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supermarché - Formulaire d'Achat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .products {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .product-price {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .quantity-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .total-section {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .total-label {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .total-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-reset {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #d0d0d0;
+        }
+
+        .success-message {
+            display: none;
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 Supermarché en Ligne</h1>
+        <p class="subtitle">Formulaire d'achat - Commandez maintenant !</p>
+
+        <div class="success-message" id="successMessage">
+            ✅ Commande confirmée ! Merci pour votre achat.
+        </div>
+
+        <form id="purchaseForm">
+            <!-- Informations client -->
+            <div class="form-group">
+                <label for="name">Nom complet</label>
+                <input type="text" id="name" name="name" placeholder="Jean Dupont" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="jean@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Téléphone</label>
+                <input type="text" id="phone" name="phone" placeholder="+33 6 00 00 00 00" required>
+            </div>
+
+            <!-- Produits -->
+            <label style="font-weight: 700; margin-bottom: 15px; display: block;">📦 Sélectionnez vos produits :</label>
+            <div class="products">
+                <div class="product-item">
+                    <div>
+                        <span class="product-name">Pommes (kg)</span>
+                        <span class="product-price">2,99 €</span>
+                    </div>
+                    <input type="number" class="quantity-input product-qty" data-price="2.99" min="0" value="0">
+                </div>
+
+                <div class="product-item">
+                    <div>
+                        <span class="product-name">Pain (unité)</span>
+                        <span class="product-price">1,50 €</span>
+                    </div>
+                    <input type="number" class="quantity-input product-qty" data-price="1.50" min="0" value="0">
+                </div>
+
+                <div class="product-item">
+                    <div>
+                        <span class="product-name">Lait (litre)</span>
+                        <span class="product-price">0,99 €</span>
+                    </div>
+                    <input type="number" class="quantity-input product-qty" data-price="0.99" min="0" value="0">
+                </div>
+
+                <div class="product-item">
+                    <div>
+                        <span class="product-name">Fromage (250g)</span>
+                        <span class="product-price">3,50 €</span>
+                    </div>
+                    <input type="number" class="quantity-input product-qty" data-price="3.50" min="0" value="0">
+                </div>
+
+                <div class="product-item">
+                    <div>
+                        <span class="product-name">Tomates (kg)</span>
+                        <span class="product-price">2,20 €</span>
+                    </div>
+                    <input type="number" class="quantity-input product-qty" data-price="2.20" min="0" value="0">
+                </div>
+            </div>
+
+            <!-- Total -->
+            <div class="total-section">
+                <div class="total-label">Total de la commande :</div>
+                <div class="total-price" id="totalPrice">0,00 €</div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="button-group">
+                <button type="submit" class="btn-submit">✓ Confirmer l'achat</button>
+                <button type="reset" class="btn-reset">✕ Effacer</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Calculer le total
+        function calculateTotal() {
+            const quantities = document.querySelectorAll('.product-qty');
+            let total = 0;
+
+            quantities.forEach(input => {
+                const price = parseFloat(input.dataset.price);
+                const quantity = parseInt(input.value) || 0;
+                total += price * quantity;
+            });
+
+            document.getElementById('totalPrice').textContent = total.toFixed(2) + ' €';
+        }
+
+        // Écouter les changements de quantité
+        document.querySelectorAll('.product-qty').forEach(input => {
+            input.addEventListener('change', calculateTotal);
+            input.addEventListener('input', calculateTotal);
+        });
+
+        // Gérer la soumission du formulaire
+        document.getElementById('purchaseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Afficher le message de succès
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('show');
+
+            // Masquer le message après 3 secondes
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+
+            // Réinitialiser le formulaire
+            this.reset();
+            calculateTotal();
+        });
+
+        // Calculer au chargement de la page
+        calculateTotal();
+    </script>
+</body>
+</html>
