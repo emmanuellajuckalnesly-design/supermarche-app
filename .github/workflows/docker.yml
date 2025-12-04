@@ -1,0 +1,27 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t supermarche-app:${{ github.sha }} .
+
+      - name: Test Docker image
+        run: |
+          docker run -d -p 8080:80 --name test-supermarche supermarche-app:${{ github.sha }}
+          sleep 5
+          curl -f http://localhost:8080 || exit 1
+          docker stop test-supermarche
+
+      - name: Success message
+        run: echo "✅ Docker image built and tested successfully!"
