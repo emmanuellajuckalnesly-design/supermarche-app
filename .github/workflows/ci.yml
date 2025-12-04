@@ -1,0 +1,46 @@
+name: CI Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du dépôt
+        uses: actions/checkout@v3
+
+      - name: Vérifier que index.html existe
+        run: |
+          if [ -f index.html ]; then
+            echo "✅ Fichier index.html trouvé"
+          else
+            echo "❌ Fichier index.html manquant"
+            exit 1
+          fi
+
+      - name: Vérifier que Dockerfile existe
+        run: |
+          if [ -f Dockerfile ]; then
+            echo "✅ Fichier Dockerfile trouvé"
+          else
+            echo "❌ Fichier Dockerfile manquant"
+            exit 1
+          fi
+
+      - name: Test simple du HTML
+        run: |
+          if grep -q "Supermarché" index.html; then
+            echo "✅ Le contenu HTML est correct"
+          else
+            echo "❌ Contenu HTML incorrect"
+            exit 1
+          fi
+
+      - name: CI Pipeline exécuté avec succès
+        run: echo "✅ Tous les tests CI sont passés !"
