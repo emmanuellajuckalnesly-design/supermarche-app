@@ -33,20 +33,3 @@ jobs:
 
       - name: Image pushed successfully
         run: echo "✅ Image Docker pushée sur Docker Hub !"
-```
-
-### Étape 19.3.3 : Sauvegarde le fichier
-
-1. Clique sur **File** → **Save** (Ctrl+S)
-
-✅ **Le fichier est modifié !**
-
----
-
-## **ÉTAPE 19.4 : Commit et Push**
-
-1. Ouvre **GitHub Desktop**
-2. Tu devrais voir la modification de `docker.yml`
-3. Écris le message :
-```
-   
