@@ -1,6 +1,7 @@
 # Terraform
-.terraform/
-*.tfstate
-*.tfstate.*
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
 .DS_Store
-terraform.tfvars
