@@ -1,0 +1,91 @@
+name: Terraform Plan and Apply
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/terraform.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    
+    env:
+      TF_VERSION: "1.14.1"
+      LINODE_TOKEN: ${{ secrets.LINODE_TOKEN }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Terraform Format Check
+        working-directory: ./terraform
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: terraform plan -var="linode_token=$LINODE_TOKEN" -out=tfplan
+        env:
+          LINODE_TOKEN: ${{ secrets.LINODE_TOKEN }}
+
+      - name: Save Terraform Plan
+        working-directory: ./terraform
+        run: terraform show -json tfplan > tfplan.json
+
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-plan
+          path: ./terraform/tfplan.json
+
+      - name: Comment PR with Plan
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('./terraform/tfplan.json', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '```\nTerraform Plan:\n' + plan.substring(0, 1000) + '\n```'
+            });
+
+      - name: Terraform Apply (Main branch only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        working-directory: ./terraform
+        run: terraform apply -auto-approve tfplan
+        env:
+          LINODE_TOKEN: ${{ secrets.LINODE_TOKEN }}
+
+      - name: Get Terraform Outputs
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        working-directory: ./terraform
+        run: |
+          echo "=== Instance créée ===" 
+          terraform output -raw instance_url
+          echo ""
+          echo "=== IP Address ==="
+          terraform output -raw instance_ip
